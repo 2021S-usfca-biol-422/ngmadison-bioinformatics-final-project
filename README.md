@@ -12,7 +12,7 @@ connection with possible variants and looking for the presence of variants at
 all. Identifying differences in Qatari sequence data with that of reference 
 genome data for SARS-CoV-2 will be important.  
 
-Data sourced from the NCBI SAR-CoV-2 BioProject Database. 
+Data sourced from the NCBI SAR-CoV-2 BioProject Database.  
 SRA BioProject ID: PRJNA707370  
 
 Parts of this pipeline approach are based on the pipeline described in the [Data Carpentry Genomics lessons](https://datacarpentry.org/genomics-workshop/), which are made available under a [CC-BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).  
