@@ -37,4 +37,5 @@ Parts of this pipeline approach are based on the pipeline described in the [Data
 * Push to GitHub and open pull request.  
 
 # Change Log
+* 2021-05-03: Add SRA run table for variant analysis and test using pipeline.
 * 2021-04-19: Update README to include project proposal, dataset SRA ID, and theorized workflow.  
