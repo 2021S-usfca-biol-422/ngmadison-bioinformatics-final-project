@@ -28,8 +28,9 @@ subset_country_testing <- function(input_file_name,
   }
 
   # save country testing data to new csv file in output directory
-  readr::write_csv(country_subset, file = paste0("output/",
-                                                 "testing_subset/",
+  readr::write_csv(country_subset, file = paste0("data/",
+                                                 "covid-19-data-owid/",
+                                                 "testing/",
                                                  "subset_country_testing",
                                                  "_",
                                                  country_test_subset,
