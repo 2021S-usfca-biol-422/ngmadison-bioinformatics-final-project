@@ -1,6 +1,6 @@
 ---
-title: 'Your Title Here'
-author: "Don Francisco"
+title: 'Asessing the Impact of COVID-19 in Qatar'
+author: "Madison Ng"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 csl: bioinformatics.csl
@@ -8,7 +8,11 @@ bibliography: references.bib
 params:
   gff_file_path: "data/metadata/sars_refgenome_annotation.gff"
   vcf_dir_path: "data/11_vcf_output_for_R"
-  sra_runtable_path: "data/00_sra_runtable/SraRunTable_PRJNA656695_short_example.txt"
+  sra_runtable_path: "data/00_sra_runtable/SraRunTable_PRJNA707370.txt"
+  vaccine_data_path: "data/covid-19-data-owid/vaccinations/vaccinations.csv"
+  testing_data_path: "data/covid-19-data-owid/testing/covid_testing_all_observations_cleaned_2021_05_09_MN.csv"
+  country_iso_code: "QAT"
+  country_name: "Qatar"
 ---
 
 ```{r setup, include = FALSE}
@@ -19,30 +23,45 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 # Background and Overview
-
-This is a report on SARS-CoV-2, including some variant analysis [@koyama2020variant].
+In December 2019, samples of the COVID-19 causing virus, SARS-CoV-2, were first identified in Wuhan, China. By March 2020, the World Health Organization declared COVID-19 a pandemic [@WHOpandemic2020]. This disease can cause mild to severe flu-like symptoms and has both high infection and mortality rates. To date, 3.2 million reported global deaths and the toll is still rising [@WHOmortality2021]. There is hope now that worldwide vaccine efforts are well under way. Despite this, the impact of COVID-19 on smaller countries is not well broadcast in major Western media. Across the globe, common public health measures include: enacting lockdowns, travel restrictions, and mask mandates but enforcement varies across countries. How have enacting public safety measures, the presence of possible variants, and rising vaccination rates influenced the pandemic's impact in smaller countries? To this end, I analyzed Qatari case data [@covdata2020], vaccination and testing data [@OWIDdata2021] along with specific mutations in the SARS-CoV-2 genome [@koyama2020variant; @rouchka2020variant] to explore the pandemic's impact on Qatar. With a population of over 2.8 million and 70% of those being males aged 25-54 [@worldbank2019], I wanted to see how robust of a response there was to the pandemic. This analysis shows that despite less strict lockdown practices, the impact of the pandemic on Qatar has been low compared to other countries with higher death tolls.
 
 # Methods
 
-See the set of tutorials on the [vcfR package website](https://knausb.github.io/vcfR_documentation/index.html).
+## Case Data Analysis
+I obtained the necessary COVID-19 case data from the `covdata` package [@covdata2020]. I used `filter` and `ggplot2` [@Wickham2016] functions like `ggplot` and `geom_line` to generate graphs related to the daily and later weekly case and death rates in Qatar since the beginning of the pandemic.
 
-You may also want to use any of a range of different COVID data packages and data sources:
+## Vaccination & Testing Data Analysis
+I obtained Qatari vaccination and testing data from Our World in Data [@OWIDdata2021]. I used `dplyr` and `readr` to isolate data for Qatar [@Wickham2019]. After this, I also used `ggplot2` to generate graphs tracking vaccination numbers over time. Graphs were also generated for testing data and the short-term positivity rate.
 
-* https://kjhealy.github.io/covdata/
-* https://github.com/como-ph/oxcovid19
-* https://ropensci.org/blog/2020/10/20/searching-medrxivr-and-biorxiv-preprint-data/
-* https://covidtracking.com/data/api
-  * `readr::read_csv("https://api.covidtracking.com/v1/states/daily.csv")`
+## Variant Analysis
+I obtained the SRA COVID-19 sample data for this analysis from a Qatari data set published to the NCBI SARS-CoV-2 BioProject Database [(found here)](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA707370). I employed an analysis pipeline provided by Naupaka Zimmerman to align my obtained sample data with a SARS-CoV-2 reference genome also from NCBI [(access here)](https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_045512.2&db=nuccore&report=fasta&retmode=text&withmarkup=on&tool=portal&log$=seqview&maxdownloadsize=100000000). The pipeline cleaned, sorted, and annotated fastq data files for the reference genome and Qatari sample data. It also generated a series of VCF files for the sample data read into R with `vcfR` [@vcfR2017] for further analysis. I then generated a series of graphs and tables that showed the counts of distinct SNPs for known SARS-CoV-2 genes, the proportion of the most prevalent gene in the Qatari data set, and the occurrence of specific mutations related to the gene.
 
-## Subsections are ok too
+## Report Generation
+A Makefile provided by Naupaka Zimmerman along with the variant analysis pipeline drove the analysis pipeline and final report generation.
 
-# Results and Discussion
+# Results
+
+## Case and Mortality Data Analysis
+The overall trend of cases and deaths showed one major surge in the spring-summer of 2020, as seen in the daily data from **Figure 1a**. This was also corroborated by the weekly data in **Figure 1b**, which also showed another likely surge starting at the beginning of April 2021. The overall death rate was low in relation to the number of infections, which suggests that despite numerous infections the overall severity of cases in Qatar was low. **Figure 2** provides a more insightful look at weekly mortality trends, which has peaks that mirror the spring-summer surge of 2020 and the potential surge in April 2021. The more significant upward trend of weekly deaths in April 2021 suggest that the virus could be more infectious and severe or that infected individuals were from a different population that had less of a robust response to the virus than the initial population from the spring-summer 2020 surge.
+
+## Vaccination & Testing Data Analysis
+Vaccinations have been trending since they were initially administered in late December, according to the data from **Figure 3**. The overall number of vaccinations given has outpaced the number of deaths which may speak to the continued lower number of deaths in Qatar compared to other countries with higher mortality rates. However, although there was an uptick in vaccinations the vaccine effort was not enough to stop the April 2021 peak in deaths. Despite this, testing has remained constant. **Figure 4** shows a general increased rate of testing during surges. The spring-summer 2020 surge saw considerable amounts of testing and even more testing in the more recent spring 2021 months that lead up to and were during the possible second COVID-19 surge. The short-term positivity trends seen in **Figure 5** reflect the cases trend seen during the 2020 surge and the more recent possible surge. Positivity trends did not match the trends seen in the mortality rates in **Figure 2**, which seems optimistic for how deadly the virus is for the infected population in Qatar. This may lend to the fact the virus being more infectious than deadly or the infected are more able to mount an immune response without dying.
+
+## Variant Analysis
+The most prevalent SNPs found in the data from Qatar were the S, N, and ORF3a genes. **Figure 6** visualizes this, with the S gene found as the most common for SNPs among the known SARS-CoV-2 genes identified in the viral reference genome. This indicates that there was likely a high occurrence of spike protein-related mutations that may have contributed to the high infection rates seen during the 2020 surge. This suggests viral particles that infected people in Qatar were more able to stick to human cells during the initial infection because the spike protein is what helps the virus attach to human cells. This also suggests that the prevalence of S gene SNPs made the virus more infectious, but not necessarily more deadly because of the low death rates in comparison to infections seen in **Figures 1a & 1b**. Indeed, **Figure 7** shows the change in the proportion of SNPs in the S gene was very present and highly volatile during the first Qatari surge. This confirms that high infection rates may be associated with high presence of spike protein SNPs that made the virus more infectious. **Table 1** shows the specific occurrence of various mutations identified in the S gene based on samples from the Qatari data set. Most notably, there was a high number of G to A mutations at the 23403 site. Mutations as this site have been linked to variants of concern like B.1.1.7. and B.1.3.5.1. which are the U.K. and South African variants, respectively.
+
+# Discussion
+Mortality versus infection rates are considerably lower in Qatar than seen in other countries. This may be associated with the fact a majority of the the Qatari population is within the 25-54 year-old age bracket. Individuals in this group are less likely to succumb to COVID-19 due to being younger and having more robust immune systems. This would lend to them being infected but not dying as much as was seen in other European with large elderly populations. Surprisingly, Qatar did not have as strict lockdown measures as other countries, with only recommended stay-at-home mandates during the majority of the pandemic [(Reuters, 2021)](https://graphics.reuters.com/world-coronavirus-tracker-and-maps/countries-and-territories/qatar/). At its peak, the 2020 surge had a total of 4 daily deaths, and the April 2021 uptick and 9 daily deaths. However, during these surges one wonders if deaths and infections could have been further mitigated by enforcing stricter lockdown rules. Additionally, the initial hot spots for the pandemic in Qatar were migrant labor camps where crowding lead to significant spread [(CBS News, 2020)](https://www.cbsnews.com/news/coronavirus-in-qatar-spreads-exponentially-in-migrant-worker-labor-camps/). More stringent lockdown rules could have minimized spread here, which could have helped lower the 2020 surge considerably.  
+
+Despite this, such severe lockdown procedures may not have been necessary due to a mask mandate which has a maximum penalty of 3 years prison if violated [(France24, 2020)](https://www.france24.com/en/20200514-qatar-makes-face-masks-mandatory-on-threat-of-jail-fines). Based on infection and deaths rates, the Qatari government did what they felt was necessary to mitigate the impact of the virus in their country. Coming from an American perspective, I believe they have done reasonably well in comparison to how the US handled the pandemic. While the overall impact of the pandemic on Qatar seems relatively small compared to other countries, this does not diminish the economic and personal toll that the pandemic has taken on Qatar. Over 500 deaths are currently reported, and over 210,000 are reportedly infected. These numbers may seem small, but they do not show the damage the virus may have done to the bodies of the infected or how many families have lost loved ones. The recent increase in cases and deaths in April 2021 is concerning but increasing vaccination rates suggest a positive outlook for Qatar. The limited proportion of infections and deaths in comparison to the total population is proof the impact of the pandemic is reducible. With the proper measures and resources, small countries are equally as equipped to handle the pandemic as their large counterparts.
+
 
 ```{r load-packages-and-functions}
 library("vcfR")
 library("ggplot2")
 library("dplyr")
 library("ggthemes")
+library("covdata")
 
 # this loads all function files in the code/functions directory
 function_paths <- list.files("code/functions", full.names = TRUE)
@@ -58,22 +77,213 @@ stacked_vcfs <- parse_tidy_and_stack_vcfs(
 # load in the gff file with genome annotations for SARS-CoV-2
 gff <- read_gff(gff_file_path = params$gff_file_path)
 
-# pull out just the named genes from the annotation file
+# pull out the named genes from the annotation file
 gene_table <- extract_genes_from_gff(annotation_object = gff)
 
 # combine the stacked vcf table with the gene names and the metadata from
-# the sra runtable file
+# the sra run table file
 vcf_with_metadata <- add_genes_metadata_to_vcfstack(
   sra_runtable_path = params$sra_runtable_path,
   stacked_vcf = stacked_vcfs,
   cleaned_genes_table = gene_table)
 ```
 
+```{r load-owid-sourced-data}
+# load in vaccination data set
+vaccine_data <- subset_country_vax(
+  input_file_name = params$vaccine_data_path,
+  country_vax_subset = params$country_iso_code)
+
+# load in testing data set
+testing_data <- subset_country_testing(
+  input_file_name = params$testing_data_path,
+  country_test_subset = params$country_iso_code)
+```
+
 # Figures
+
+```{r daily-cases-deaths-peak-pandemic-plot}
+# generate daily cases and deaths comparison plot
+daily_case_death_plot <- covdata::covnat_daily %>%
+  filter(cname == params$country_name) %>%
+# next three lines based on https://stackoverflow.com/questions/3777174/
+# URL cont'd    plotting-two-variables-as-lines-using-ggplot2-on-the-same-graph
+  ggplot(aes(date)) +
+  geom_line(aes(y = cases, color = "cases")) +
+  geom_line(aes(y = deaths, color = "deaths")) +
+# title generation based on https://r-graphics.org/recipe-appearance-title
+  ggtitle(label = "Comparison of daily COVID-19 cases and deaths in Qatar",
+          subtitle = "(January to December 2020)") +
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd               center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5), # center title
+        plot.subtitle = element_text(hjust = 0.5)) + # center subtitle
+  labs(x = "Date",
+       y = "Reported count",
+       color = "Data type") +
+  scale_color_brewer(palette = "Set2") + # make colors uniform to report
+  scale_y_continuous(breaks = seq(0, 2500, 150)) + # modify y axis grid lines
+  scale_x_date(date_breaks = "months", # modify x axis to show all months
+               date_labels = "%b") # change label to months
+
+daily_case_death_plot
+```
+
+
+**Figure 1a**: Reported counts of daily cases and deaths in Qatar during 2020. There was a considerable surge in infections during the summer that may have resulted from increased interpersonal interactions. Daily case and death counts from `covdata` package halted in favor of weekly counts on 2020 December 14.
+
+```{r weekly-cases-deaths-2021-plot}
+# generate weekly covid case and death plot
+weekly_case_death_plot <- covdata::covnat_weekly %>%
+  filter(cname == params$country_name) %>%
+# next three lines based on https://stackoverflow.com/questions/3777174/
+# URL cont'd    plotting-two-variables-as-lines-using-ggplot2-on-the-same-graph
+  ggplot(aes(date)) +
+  geom_line(aes(y = cases, color = "cases")) +
+  geom_line(aes(y = deaths, color = "deaths")) +
+# title generation based on https://r-graphics.org/recipe-appearance-title
+  ggtitle(label = "Comparison of weekly COVID-19 cases and deaths in Qatar",
+          subtitle = "(March 2020 to April 2021)") +
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd      center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  labs(x = "Date",
+       y = "Reported count",
+       color = "Data type") +
+  scale_color_brewer(palette = "Set2") + # make colors uniform to report
+  scale_y_continuous(breaks = seq(0, 15000, 1000)) + # modify y axis grid lines
+  scale_x_date(date_breaks = "months", # modify x axis to show all months
+               date_labels = "%y-%b") + # change label to months
+# x axis label adjust based on code from https://stackoverflow.com/questions/
+# URL cont'd      1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
+
+weekly_case_death_plot
+```
+
+
+**Figure 1b**: Weekly reported cases and deaths counts since the beginning of the pandemic. A noted second surge is possible based on the upward trend of the April 2021 data so far.
+
+```{r weekly-mortality-plot}
+# create mortality rate plot
+mortality_plot <- covdata::covnat_weekly %>%
+  filter(cname == params$country_name) %>%
+  filter(deaths != 0) %>%
+  ggplot(aes(x = date,
+             y = deaths,
+             color = "#377eb8")) +
+  geom_line() +
+# title generation based on https://r-graphics.org/recipe-appearance-title
+  ggtitle(label = "Count of weekly COVID-19 deaths in Qatar",
+          subtitle = "(March 2020 to April 2021)") +
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd      center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  labs(x = "Date",
+       y = "Reported count") +
+  scale_x_date(date_breaks = "months", # modify x axis to show all months
+               date_labels = "%y-%b") + # change label to months
+  scale_y_continuous(breaks = seq(0, 50, 5)) + # modify y axis grid lines
+# x axis label adjust based on code from https://stackoverflow.com/questions/
+# URL cont'd      1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1)) +
+# code sourced from https://r-graphics.org/recipe-legend-remove
+    theme(legend.position = "none") # remove legend since there's only one line
+
+mortality_plot
+```
+
+
+**Figure 2**: Weekly death rates in Qatar since the start of the pandemic. Deaths peaked during the initial spring-summer 2020 surge, and appear to be peaking again in spring 2021.
+
+```{r vaccinations-daily-plot}
+# generate plot to track changing vaccination rates
+vaccine_plot <- vaccine_data %>%
+  ggplot(aes(x = date,
+             y = daily_vaccinations)) +
+  geom_line(color = "#8da0cb") +
+  labs(title = "Count of daily COVID-19 vaccinations in Qatar",
+       x = "Date",
+       y = "Vaccines given") +
+# next step based on code from https://stackoverflow.com/questions/18081746/
+# URL cont'd      controlling-both-the-major-and-minor-grid-lines-on-the-y-axis
+  scale_y_continuous(breaks = seq(0, 30000, 2000), # modify y axis grid lines
+                     minor_breaks = seq(0, 30000, 1000)) +
+  scale_x_date(date_breaks = "weeks",
+               date_labels = "%y-%b-%d") + # modify date labels
+  # x axis label adjust based on code from https://stackoverflow.com/questions/
+# URL cont'd      1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1)) +
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd               center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5))
+
+vaccine_plot
+```
+
+
+**Figure 3**: Daily vaccinations in Qatar. There was limited data from December 2020 to early March 2021, and it was not well tracked according to the numbers from the OWID vaccination data set. More intensive vaccination numbers were recorded since mid-March 2021.
+
+```{r testing-plot}
+# generate plot to track testing rates
+testing_plot <- testing_data %>%
+  ggplot(aes(x = date,
+             y = daily_change_in_cumulative_total)) +
+  geom_line(color = "#8da0cb") +
+  labs(title = "Cumulative testing levels in Qatar",
+       x = "Date",
+       y = "Tests") +
+# next step based on code from https://stackoverflow.com/questions/18081746/
+# URL cont'd      controlling-both-the-major-and-minor-grid-lines-on-the-y-axis
+  scale_x_date(date_breaks = "months", # modify x axis to show all months
+               date_labels = "%y-%b") + # modify date labels
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd               center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(breaks = seq(0, 12000, 1000), # modify y axis grid lines
+                     minor_breaks = seq(0, 12000, 500)) +
+# x axis label adjust based on code from https://stackoverflow.com/questions/
+# URL cont'd      1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
+
+testing_plot
+```
+
+
+**Figure 4**: Cumulative testing rates in Qatar since March 2020. There was a considerable peak during the 2020 spring-summer surge, but an even more significant one appears during mid-fall 2020. There are breaks in this data set where no data is available, however the impact does not dramatically alter the general testing trend.
+
+```{r positivity-rate-plot}
+# generate plot to track positivity rates
+positivity_plot <- testing_data %>%
+  ggplot(aes(x = date,
+             y = short_term_positive_rate)) +
+  geom_line(color = "#8da0cb") +
+  labs(title = "Short term positivity rate in Qatar",
+       x = "Date",
+       y = "Percent") +
+# next step based on code from https://stackoverflow.com/questions/18081746/
+# URL cont'd      controlling-both-the-major-and-minor-grid-lines-on-the-y-axis
+  scale_x_date(date_breaks = "months", # modify x axis to show all months
+               date_labels = "%y-%b") + # modify date labels
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd               center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(breaks = seq(0.0, 0.4, 0.05), # modify y axis grid lines
+                     minor_breaks = seq(0.0, 0.4, 0.01)) +
+  # URL cont'd      1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
+
+positivity_plot
+```
+
+
+**Figure 5**: Tracking short-term positivity since the onset of the pandemic and testing. Test positivity mirrors reported case count trends when positivity peaks.
 
 ```{r sample-plot}
 # create a plot of unique SNP locations within each gene across all samples
-vcf_with_metadata %>%
+snp_plot <- vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # get rid of SNPs not in gene regions
   group_by(gene, pos) %>%
   tally() %>% # this gives a column n for the number of gene by position
@@ -82,26 +292,75 @@ vcf_with_metadata %>%
   ggplot(aes(x = gene,
              y = n)) +
     geom_col() +
-    labs(title = "Count of distinct SNPs in Named SARS-CoV-2 Genes",
+    labs(title = "Count of distinct SNPs in named SARS-CoV-2 genes",
          x = "Gene Name") +
+# next step based on code from https://stackoverflow.com/questions/18081746/
+# URL cont'd      controlling-both-the-major-and-minor-grid-lines-on-the-y-axis
+  scale_y_continuous(breaks = seq(0, 200, 10)) + # modify y axis grid lines
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd               center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5))
   theme_few() # get rid of the grey background
+
+snp_plot
 ```
 
-**Figure 1**: N and S genes have more unique SNPs in the set of samples analyzed.
+
+**Figure 6**: Counts for distinct SNPs from known SARS-CoV-2 genes as found in the Qatari sample data set. ORF3a, N, and S genes have more unique SNPs in the set of samples analyzed.
+
+```{r snp-occurence-plot}
+# count samples by date for plotting
+number_samples <- vcf_with_metadata %>%
+  group_by(Collection_Date) %>%
+  tally()
+
+# create a plot of most prevalent mutation
+snp_occurrence_plot <- vcf_with_metadata %>%
+  filter(gene == "S") %>% # isolate most prevalent mutation
+  group_by(gene, Collection_Date) %>%
+  tally() %>%
+  left_join(number_samples, suffix = c(".gene", ".total"),
+            by = "Collection_Date") %>% # combine sample count with gene data
+  ggplot(aes(x = Collection_Date,
+             y = n.gene / n.total)) +
+    geom_line(color = "#8da0cb") +
+    labs(title = "Change in proportion of SNPs in S gene over time",
+         x = "Date",
+         y = "Proportion") +
+# next step based on code from https://stackoverflow.com/questions/18081746/
+# URL cont'd      controlling-both-the-major-and-minor-grid-lines-on-the-y-axis
+  scale_x_date(date_breaks = "months", # modify x axis to show all months
+               date_labels = "%y-%b") + # modify date labels
+# title centering based on https://stackoverflow.com/questions/40675778/
+# URL cont'd               center-plot-title-in-ggplot2
+  theme(plot.title = element_text(hjust = 0.5))
+
+snp_occurrence_plot
+```
+
+**Figure 7**: Tracking prevalence of the most SNPs in the most common known SARS-CoV-2 gene found in the Qatari sample data set.
+
 
 # Tables
 
-```{r example-table}
-# An example table to show the length of each gene using its start and end
-gene_table %>%
-  mutate(length = end - start) %>%
-  select(gene_name, start, end, length) %>%
-  knitr::kable(col.names = c("Gene Name",
-                             "Start",
-                             "End",
-                             "Length"))
+```{r mutations-in-s-table}
+# table to tally up different mutations in s gene
+vcf_with_metadata %>%
+  filter(gene == "S") %>%
+  select(gene, pos, alt, ref) %>%
+  group_by(gene, pos, alt, ref) %>%
+  tally() %>%
+  arrange(desc(n)) %>%
+  head(10) %>%
+  arrange(pos) %>%
+knitr::kable(col.names = c("Gene",
+                           "Position",
+                             "Reference",
+                             "Variation",
+                             "Occurrences"))
 ```
 
-**Table 1**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
+**Table 1**: Occurrence rates for the top 10 most common S gene mutations found in the Qatari data set. The most prevalent mutation is in the 23403 position.
+
 
 # Sources Cited
