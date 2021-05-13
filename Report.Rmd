@@ -9,7 +9,7 @@ params:
   gff_file_path: "data/metadata/sars_refgenome_annotation.gff"
   vcf_dir_path: "data/11_vcf_output_for_R"
   sra_runtable_path: "data/00_sra_runtable/SraRunTable_PRJNA707370.txt"
-  vaccine_data_path: "data/covid-19-data-owid/vaccinations/vaccinations.csv"
+  vax_data_path: "data/covid-19-data-owid/vaccinations/vaccinations.csv"
   testing_data_path: "data/covid-19-data-owid/testing/covid_testing_all_observations_cleaned_2021_05_09_MN.csv"
   country_iso_code: "QAT"
   country_name: "Qatar"
@@ -91,7 +91,7 @@ vcf_with_metadata <- add_genes_metadata_to_vcfstack(
 ```{r load-owid-sourced-data}
 # load in vaccination data set
 vaccine_data <- subset_country_vax(
-  input_file_name = params$vaccine_data_path,
+  input_file_name = params$vax_data_path,
   country_vax_subset = params$country_iso_code)
 
 # load in testing data set
