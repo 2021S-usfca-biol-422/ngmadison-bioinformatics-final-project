@@ -27,7 +27,7 @@ subset_country_vax <- function(input_file_name,
     stop("ERROR: No rows matching given country name. Possible typo.")
   }
 
-  # save country vaccine data to new csv file in output directory
+  # save country vaccine data to new csv file in data directory
   readr::write_csv(country_subset, file = paste0("data/",
                                                  "covid-19-data-owid/",
                                                  "vaccinations/",
