@@ -299,7 +299,7 @@ snp_plot <- vcf_with_metadata %>%
   scale_y_continuous(breaks = seq(0, 200, 10)) + # modify y axis grid lines
 # title centering based on https://stackoverflow.com/questions/40675778/
 # URL cont'd               center-plot-title-in-ggplot2
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
   theme_few() # get rid of the grey background
 
 snp_plot
